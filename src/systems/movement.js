@@ -1,16 +1,27 @@
 import { Player } from "../entities/player.js";
-import { Input } from "./input.js";
+
+const keys = {
+  up: false,
+  down: false,
+  left: false,
+  right: false
+};
+
+export function handleKey(key, pressed) {
+  if (key === "w" || key === "ArrowUp") keys.up = pressed;
+  if (key === "s" || key === "ArrowDown") keys.down = pressed;
+  if (key === "a" || key === "ArrowLeft") keys.left = pressed;
+  if (key === "d" || key === "ArrowRight") keys.right = pressed;
+}
 
 export function updateMovement(dt) {
-  if (!Player.alive) return;
-
   let dx = 0;
   let dy = 0;
 
-  if (Input.up) dy -= 1;
-  if (Input.down) dy += 1;
-  if (Input.left) dx -= 1;
-  if (Input.right) dx += 1;
+  if (keys.up) dy -= 1;
+  if (keys.down) dy += 1;
+  if (keys.left) dx -= 1;
+  if (keys.right) dx += 1;
 
   if (dx !== 0 || dy !== 0) {
     const len = Math.hypot(dx, dy);
@@ -19,12 +30,9 @@ export function updateMovement(dt) {
 
     Player.x += dx * Player.speed * dt;
     Player.y += dy * Player.speed * dt;
-
-    Player.battery -= Player.batteryDrain * dt;
   }
+}
 
-  if (Player.battery <= 0) {
-    Player.battery = 0;
-    Player.alive = false;
-  }
+export function isMoving() {
+  return keys.up || keys.down || keys.left || keys.right;
 }
